@@ -4,6 +4,19 @@ const iconPath = path.join(__dirname, 'icon.png');
 
 let mainWindow;
 
+async function logout() {
+    try {
+        await mainWindow.webContents.executeJavaScript(`
+            const logoutButton = document.querySelector('button[data-testid="logout-button"]');
+            if (logoutButton) {
+                logoutButton.click();
+            }
+        `);
+    } catch (error) {
+        console.error('Error during logout:', error);
+    }
+}
+
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1200,
@@ -21,7 +34,8 @@ function createWindow() {
     // Open the devTools for debugging - optional might delete later
     //mainWindow.webContents.openDevTools();
 
-    mainWindow.on('closed', () => {
+    mainWindow.on('closed', async () => {
+        await logout();
         mainWindow = null;
     });
 }
